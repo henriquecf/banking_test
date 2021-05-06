@@ -1,13 +1,13 @@
 defmodule PacklaneWeb.AccountLive.Index do
   use PacklaneWeb, :live_view
 
-  alias Packlane.{Banking, Accounts}
+  alias Packlane.Banking
   alias Packlane.Banking.Account
 
   @impl true
-  def mount(_params, %{"user_token" => user_token}, socket) do
-    user = Accounts.get_user_by_session_token(user_token)
-    {:ok, assign(socket, banking_accounts: list_banking_accounts(), current_user: user)}
+  def mount(_params, session, socket) do
+    socket = assign(socket, :banking_accounts, list_banking_accounts())
+    {:ok, assign_current_user(socket, session)}
   end
 
   @impl true

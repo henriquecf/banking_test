@@ -1,5 +1,8 @@
 defmodule PacklaneWeb.LiveHelpers do
+  import Phoenix.LiveView
   import Phoenix.LiveView.Helpers
+
+  alias Packlane.Accounts
 
   @doc """
   Renders a component inside the `PacklaneWeb.ModalComponent` component.
@@ -19,5 +22,13 @@ defmodule PacklaneWeb.LiveHelpers do
     path = Keyword.fetch!(opts, :return_to)
     modal_opts = [id: :modal, return_to: path, component: component, opts: opts]
     live_component(socket, PacklaneWeb.ModalComponent, modal_opts)
+  end
+
+  def assign_current_user(socket, session) do
+    assign_new(
+      socket,
+      :current_user,
+      fn -> Accounts.get_user_by_session_token(session["user_token"]) end
+    )
   end
 end
