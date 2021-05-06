@@ -50,35 +50,6 @@ defmodule PacklaneWeb.AccountLiveTest do
       assert html =~ "Account created successfully"
       assert html =~ "some name"
     end
-
-    test "updates account in listing", %{conn: conn, account: account} do
-      {:ok, index_live, _html} = live(conn, Routes.account_index_path(conn, :index))
-
-      assert index_live |> element("#account-#{account.id} a", "Edit") |> render_click() =~
-               "Edit Account"
-
-      assert_patch(index_live, Routes.account_index_path(conn, :edit, account))
-
-      assert index_live
-             |> form("#account-form", account: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        index_live
-        |> form("#account-form", account: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, Routes.account_index_path(conn, :index))
-
-      assert html =~ "Account updated successfully"
-      assert html =~ "some updated name"
-    end
-
-    test "deletes account in listing", %{conn: conn, account: account} do
-      {:ok, index_live, _html} = live(conn, Routes.account_index_path(conn, :index))
-
-      assert index_live |> element("#account-#{account.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#account-#{account.id}")
-    end
   end
 
   describe "Show" do

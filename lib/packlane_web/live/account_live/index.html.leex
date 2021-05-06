@@ -1,4 +1,4 @@
-<h1>Listing Banking accounts</h1>
+<h1 class="text-xl">My accounts</h1>
 
 <%= if @live_action in [:new, :edit] do %>
   <%= live_modal @socket, PacklaneWeb.AccountLive.FormComponent,
@@ -10,31 +10,32 @@
     return_to: Routes.account_index_path(@socket, :index) %>
 <% end %>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Balance</th>
+<div class="flex flex-wrap -m-2 lg:-m-4" id="banking_accounts">
+  <%= for account <- @banking_accounts do %>
+    <div class="mt-8 py-8 px-8 max-w-sm mx-auto bg-white rounded-xl shadow-md space-y-2 sm:py-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-6">
+      <div class="text-center space-y-2 sm:text-left">
+        <div class="space-y-0.5">
+          <p class="text-lg text-grey font-semibold">
+            <%= account.name %>
+          </p>
+          <p class="text-black font-bold text-xl">
+            Balance: $ <%= account.balance %>
+          </p>
+          <p>
+            <span class="bg-blue-600 text-white rounded-full text-xs px-2 py-1 ml-1">
+              <%= account.type %>
+            </span>
+          </p>
+        </div>
+        <button class="px-4 py-1 text-sm text-red-600 font-semibold rounded-full border border-red-200 hover:text-white hover:bg-red-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2">Withdraw</button>
+        <button class="px-4 py-1 text-sm text-green-600 font-semibold rounded-full border border-green-200 hover:text-white hover:bg-green-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2">Deposit</button>
+      </div>
+    </div>
+  <% end %>
+</div>
 
-      <th></th>
-    </tr>
-  </thead>
-  <tbody id="banking_accounts">
-    <%= for account <- @banking_accounts do %>
-      <tr id="account-<%= account.id %>">
-        <td><%= account.name %></td>
-        <td><%= account.type %></td>
-        <td><%= account.balance %></td>
-
-        <td>
-          <span><%= live_redirect "Show", to: Routes.account_show_path(@socket, :show, account) %></span>
-          <span><%= live_patch "Edit", to: Routes.account_index_path(@socket, :edit, account) %></span>
-          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: account.id, data: [confirm: "Are you sure?"] %></span>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<span><%= live_patch "New Account", to: Routes.account_index_path(@socket, :new) %></span>
+<div class="mt-12">
+  <button class="px-4 py-1 text-sm text-blue-600 font-semibold rounded-full border border-blue-200 hover:text-white hover:bg-blue-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+    <%= live_patch "New Account", to: Routes.account_index_path(@socket, :new) %>
+  </button>
+</div>
