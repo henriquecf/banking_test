@@ -1,0 +1,40 @@
+<h1>Listing Banking accounts</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <%= live_modal @socket, PacklaneWeb.AccountLive.FormComponent,
+    id: @account.id || :new,
+    title: @page_title,
+    action: @live_action,
+    account: @account,
+    current_user: @current_user,
+    return_to: Routes.account_index_path(@socket, :index) %>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Balance</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="banking_accounts">
+    <%= for account <- @banking_accounts do %>
+      <tr id="account-<%= account.id %>">
+        <td><%= account.name %></td>
+        <td><%= account.type %></td>
+        <td><%= account.balance %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.account_show_path(@socket, :show, account) %></span>
+          <span><%= live_patch "Edit", to: Routes.account_index_path(@socket, :edit, account) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: account.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Account", to: Routes.account_index_path(@socket, :new) %></span>

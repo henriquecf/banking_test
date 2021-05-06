@@ -19,9 +19,16 @@ defmodule PacklaneWeb.Router do
   end
 
   scope "/", PacklaneWeb do
-    pipe_through :browser
+    pipe_through [:browser, :require_authenticated_user]
 
-    live "/", PageLive, :index
+    live "/", AccountLive.Index, :index
+
+    live "/banking_accounts", AccountLive.Index, :index
+    live "/banking_accounts/new", AccountLive.Index, :new
+    live "/banking_accounts/:id/edit", AccountLive.Index, :edit
+
+    live "/banking_accounts/:id", AccountLive.Show, :show
+    live "/banking_accounts/:id/show/edit", AccountLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.
