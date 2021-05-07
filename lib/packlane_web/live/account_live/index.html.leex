@@ -1,4 +1,16 @@
-<h1 class="text-xl">My accounts</h1>
+<div class="flex">
+  <h1 class=" flex-grow text-xl">My accounts</h1>
+  <span class="flex-none mx-4">
+    <button class="px-4 py-1 text-sm text-blue-600 font-semibold rounded-full border border-blue-200 hover:text-white hover:bg-blue-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+      <%= live_patch "+ transaction", to: Routes.account_index_path(@socket, :new) %>
+    </button>
+  </span>
+  <span class="flex-none">
+    <button class="px-4 py-1 text-sm text-blue-600 font-semibold rounded-full border border-blue-200 hover:text-white hover:bg-blue-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+      <%= live_patch "+ Account", to: Routes.account_index_path(@socket, :new) %>
+    </button>
+  </span>
+</div>
 
 <%= if @live_action in [:new, :edit] do %>
   <%= live_modal @socket, PacklaneWeb.AccountLive.FormComponent,
@@ -22,7 +34,7 @@
             Balance: $ <%= account.balance %>
           </p>
           <p>
-            <span class="bg-blue-600 text-white rounded-full text-xs px-2 py-1 ml-1">
+            <span class="bg-blue-200 text-white rounded-full text-xs px-2 py-1 ml-1">
               <%= account.type %>
             </span>
           </p>
@@ -32,10 +44,4 @@
       </div>
     </div>
   <% end %>
-</div>
-
-<div class="mt-12">
-  <button class="px-4 py-1 text-sm text-blue-600 font-semibold rounded-full border border-blue-200 hover:text-white hover:bg-blue-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
-    <%= live_patch "New Account", to: Routes.account_index_path(@socket, :new) %>
-  </button>
 </div>
