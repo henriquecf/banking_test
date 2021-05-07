@@ -34,7 +34,7 @@ defmodule Packlane.Banking.Transaction do
     changeset
     |> validate_required([:from_id])
   end
-  defp type_changeset(%{changes: %{type: :tranfer}} = changeset) do
+  defp type_changeset(%{changes: %{type: :transfer}} = changeset) do
     changeset
     |> validate_required([:to_id, :from_id])
   end
