@@ -47,8 +47,6 @@ defmodule PacklaneWeb do
       use Phoenix.LiveView,
         layout: {PacklaneWeb.LayoutView, "live.html"}
 
-      import PacklaneWeb.LiveHelpers
-
       unquote(view_helpers())
     end
   end

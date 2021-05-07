@@ -4,7 +4,7 @@ defmodule Packlane.Banking.Account do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   schema "banking_accounts" do
-    field :balance, :decimal
+    field :balance, :decimal, default: Decimal.new(0)
     field :name, :string
     field :type, Ecto.Enum, values: [:checking, :savings]
 
@@ -16,8 +16,7 @@ defmodule Packlane.Banking.Account do
   @doc false
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:name, :type, :balance, :user_id])
-    |> validate_required([:name, :type, :balance, :user_id])
-    |> validate_number(:balance, greater_than_or_equal_to: 0)
+    |> cast(attrs, [:name, :type, :user_id])
+    |> validate_required([:name, :type, :user_id])
   end
 end

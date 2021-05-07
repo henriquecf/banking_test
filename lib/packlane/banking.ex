@@ -5,6 +5,7 @@ defmodule Packlane.Banking do
 
   import Ecto.Query, warn: false
   alias Packlane.Repo
+  alias Ecto.Multi
 
   alias Packlane.Banking.Account
 
@@ -100,5 +101,110 @@ defmodule Packlane.Banking do
   """
   def change_account(%Account{} = account, attrs \\ %{}) do
     Account.changeset(account, attrs)
+  end
+
+  alias Packlane.Banking.Transaction
+
+  @doc """
+  Returns the list of banking_transactions.
+
+  ## Examples
+
+      iex> list_banking_transactions()
+      [%Transaction{}, ...]
+
+  """
+  def list_banking_transactions do
+    Repo.all(Transaction)
+  end
+
+  @doc """
+  Gets a single transaction.
+
+  Raises `Ecto.NoResultsError` if the Transaction does not exist.
+
+  ## Examples
+
+      iex> get_transaction!(123)
+      %Transaction{}
+
+      iex> get_transaction!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_transaction!(id), do: Repo.get!(Transaction, id)
+
+  @doc """
+  Creates a transaction.
+
+  ## Examples
+
+      iex> create_transaction(%{field: value})
+      {:ok, %Transaction{}}
+
+      iex> create_transaction(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_transaction(attrs \\ %{}) do
+    Multi.new()
+    |> Multi.insert(:transaction, Transaction.changeset(%Transaction{}, attrs))
+    |> Multi.run(:maybe_update_to_account, fn _, %{transaction: transaction} ->
+      if transaction.type in [:deposit, :transfer] do
+        to_account_query = Account |> where(id: ^transaction.to_id)
+
+        case Repo.update_all(to_account_query, inc: [balance: transaction.amount]) do
+          {1, _} ->
+            {:ok, 1}
+          {_, _} ->
+            {:error, "#{transaction.type} failed due to insuficient balance"}
+        end
+      else
+        {:ok, nil}
+      end
+    end)
+    |> Multi.run(:maybe_update_from_account, fn _, %{transaction: transaction} ->
+      if transaction.type in [:withdraw, :transfer] do
+        amount = transaction.amount |> Decimal.mult(Decimal.new(-1))
+        from_account_query = Account |> where(id: ^transaction.from_id)
+
+        result = try do
+          Repo.update_all(from_account_query, inc: [balance: amount])
+        rescue
+          _e in Postgrex.Error -> {0, 0}
+        end
+
+        case result do
+          {1, _} ->
+            {:ok, 1}
+          {_, _} ->
+            {:error, "#{transaction.type} failed due to insuficient balance"}
+        end
+      else
+        {:ok, nil}
+      end
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{transaction: transation}} ->
+        {:ok, transation}
+      {:error, :transaction, changeset, _changes_so_far} ->
+        {:error, changeset}
+      {:error, _, error, _changes_so_far} when is_binary(error) ->
+        {:error, error}
+    end
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking transaction changes.
+
+  ## Examples
+
+      iex> change_transaction(transaction)
+      %Ecto.Changeset{data: %Transaction{}}
+
+  """
+  def change_transaction(%Transaction{} = transaction, attrs \\ %{}) do
+    Transaction.changeset(transaction, attrs)
   end
 end
