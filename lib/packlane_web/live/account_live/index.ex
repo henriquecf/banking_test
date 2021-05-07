@@ -2,7 +2,7 @@ defmodule PacklaneWeb.AccountLive.Index do
   use PacklaneWeb, :live_view
 
   alias Packlane.Banking
-  alias Packlane.Banking.Account
+  alias Packlane.Banking.{Account, Transaction}
 
   @impl true
   def mount(_params, session, socket) do
@@ -31,6 +31,12 @@ defmodule PacklaneWeb.AccountLive.Index do
     socket
     |> assign(:page_title, "Listing Banking accounts")
     |> assign(:account, nil)
+  end
+
+  defp apply_action(socket, :new_transaction, _params) do
+    socket
+    |> assign(:page_title, "New Transaction")
+    |> assign(:transaction, %Transaction{})
   end
 
   @impl true

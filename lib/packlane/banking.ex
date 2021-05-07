@@ -19,7 +19,7 @@ defmodule Packlane.Banking do
 
   """
   def list_banking_accounts do
-    Repo.all(Account)
+    Repo.all(Account |> order_by(asc: :name))
   end
 
   @doc """

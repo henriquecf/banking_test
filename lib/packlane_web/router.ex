@@ -25,6 +25,7 @@ defmodule PacklaneWeb.Router do
 
     live "/banking_accounts", AccountLive.Index, :index
     live "/banking_accounts/new", AccountLive.Index, :new
+    live "/banking_accounts/new_transaction", AccountLive.Index, :new_transaction
     live "/banking_accounts/:id/edit", AccountLive.Index, :edit
 
     live "/banking_accounts/:id", AccountLive.Show, :show

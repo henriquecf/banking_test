@@ -100,7 +100,7 @@ defmodule Packlane.BankingTest do
     test "create_transaction/1 fails if account has no balance", %{user: user} do
       account = account_fixture(%{user_id: user.id})
       valid_attrs = Map.put(@valid_attrs, :from_id, account.id) |> Map.put(:type, :withdraw)
-      assert {:error, "withdraw failed due to insuficient balance"} = Banking.create_transaction(valid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Banking.create_transaction(valid_attrs)
       assert Banking.get_account!(account.id) |> Map.get(:balance) == Decimal.new("0")
     end
   end
