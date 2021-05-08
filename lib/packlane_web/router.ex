@@ -39,6 +39,7 @@ defmodule PacklaneWeb.Router do
     pipe_through [:api, :require_authenticated_user]
 
     resources "/banking_accounts", AccountController, except: [:new, :edit, :update]
+    resources "/banking_transactions", TransactionController, except: [:new, :edit, :update, :delete]
   end
 
   # Enables LiveDashboard only for development

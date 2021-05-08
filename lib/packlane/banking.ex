@@ -117,8 +117,11 @@ defmodule Packlane.Banking do
       [%Transaction{}, ...]
 
   """
-  def list_banking_transactions do
-    Repo.all(Transaction)
+  def list_banking_transactions(user_id) do
+    query = from t in Transaction,
+      join: a in Account,
+      where: a.user_id == ^user_id
+    Repo.all(query)
   end
 
   @doc """

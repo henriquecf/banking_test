@@ -73,7 +73,7 @@ defmodule Packlane.BankingTest do
     test "list_banking_transactions/0 returns all banking_transactions", %{user: user} do
       account = account_fixture(%{user_id: user.id})
       transaction = transaction_fixture(%{to_id: account.id})
-      assert Banking.list_banking_transactions() == [transaction]
+      assert Banking.list_banking_transactions(user.id) == [transaction]
     end
 
     test "get_transaction!/1 returns the transaction with given id", %{user: user} do
