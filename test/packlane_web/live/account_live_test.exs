@@ -5,9 +5,8 @@ defmodule PacklaneWeb.AccountLiveTest do
 
   alias Packlane.Banking
 
-  @create_attrs %{balance: "120.5", name: "some name", type: "checking"}
-  @update_attrs %{balance: "456.7", name: "some updated name", type: "savings"}
-  @invalid_attrs %{balance: nil, name: nil, type: nil}
+  @create_attrs %{name: "some name", type: "checking"}
+  @invalid_attrs %{name: nil, type: "checking"}
 
   defp fixture(:account, user) do
     {:ok, account} = Banking.create_account(Map.put(@create_attrs, :user_id, user.id))
@@ -32,7 +31,7 @@ defmodule PacklaneWeb.AccountLiveTest do
     test "saves new account", %{conn: conn} do
       {:ok, index_live, _html} = live(conn, Routes.account_index_path(conn, :index))
 
-      assert index_live |> element("a", "New Account") |> render_click() =~
+      assert index_live |> element("a", "+ Account") |> render_click() =~
                "New Account"
 
       assert_patch(index_live, Routes.account_index_path(conn, :new))
@@ -60,28 +59,6 @@ defmodule PacklaneWeb.AccountLiveTest do
 
       assert html =~ "Show Account"
       assert html =~ account.name
-    end
-
-    test "updates account within modal", %{conn: conn, account: account} do
-      {:ok, show_live, _html} = live(conn, Routes.account_show_path(conn, :show, account))
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Account"
-
-      assert_patch(show_live, Routes.account_show_path(conn, :edit, account))
-
-      assert show_live
-             |> form("#account-form", account: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        show_live
-        |> form("#account-form", account: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, Routes.account_show_path(conn, :show, account))
-
-      assert html =~ "Account updated successfully"
-      assert html =~ "some updated name"
     end
   end
 end

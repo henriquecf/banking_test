@@ -6,8 +6,8 @@ defmodule PacklaneWeb.AccountLive.Index do
 
   @impl true
   def mount(_params, session, socket) do
-    socket = assign(socket, :banking_accounts, list_banking_accounts())
-    {:ok, assign_current_user(socket, session)}
+    socket = assign_current_user(socket, session)
+    {:ok, assign(socket, :banking_accounts, list_banking_accounts(socket.assigns.current_user))}
   end
 
   @impl true
@@ -44,10 +44,10 @@ defmodule PacklaneWeb.AccountLive.Index do
     account = Banking.get_account!(id)
     {:ok, _} = Banking.delete_account(account)
 
-    {:noreply, assign(socket, :banking_accounts, list_banking_accounts())}
+    {:noreply, assign(socket, :banking_accounts, list_banking_accounts(socket.assigns.current_user))}
   end
 
-  defp list_banking_accounts do
-    Banking.list_banking_accounts()
+  defp list_banking_accounts(user) do
+    Banking.list_banking_accounts(user.id)
   end
 end

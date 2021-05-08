@@ -18,8 +18,11 @@ defmodule Packlane.Banking do
       [%Account{}, ...]
 
   """
-  def list_banking_accounts do
-    Repo.all(Account |> order_by(asc: :name))
+  def list_banking_accounts(user_id) do
+    query = from a in Account,
+      where: a.user_id == ^user_id,
+      order_by: [asc: :name]
+    Repo.all(query)
   end
 
   @doc """

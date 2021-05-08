@@ -16,6 +16,8 @@ defmodule PacklaneWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :fetch_current_user
   end
 
   scope "/", PacklaneWeb do
@@ -33,9 +35,11 @@ defmodule PacklaneWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", PacklaneWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", PacklaneWeb do
+    pipe_through [:api, :require_authenticated_user]
+
+    resources "/banking_accounts", AccountController, except: [:new, :edit, :update]
+  end
 
   # Enables LiveDashboard only for development
   #
