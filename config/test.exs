@@ -11,7 +11,7 @@ config :bcrypt_elixir, :log_rounds, 1
 config :packlane, Packlane.Repo,
   username: "postgres",
   password: "postgres",
-  database: "packlane_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "packlane_test_banking_test#{System.get_env("MIX_TEST_PARTITION")}",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
 

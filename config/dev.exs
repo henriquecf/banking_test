@@ -4,7 +4,7 @@ use Mix.Config
 config :packlane, Packlane.Repo,
   username: "postgres",
   password: "postgres",
-  database: "packlane_dev",
+  database: "packlane_test_banking_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
