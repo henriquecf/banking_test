@@ -14,3 +14,6 @@
 
 {:ok, checking_account} = Packlane.Banking.create_account(%{name: "My first checking account", balance: "50", user_id: user.id, type: "checking"})
 {:ok, savings_account} = Packlane.Banking.create_account(%{name: "My first savings account", balance: "2200", user_id: user.id, type: "savings"})
+
+{:ok, _transaction} = Packlane.Banking.create_transaction(%{type: "deposit", to_id: checking_account.id, amount: "200"})
+{:ok, _transaction} = Packlane.Banking.create_transaction(%{type: "deposit", to_id: savings_account.id, amount: "2500"})
