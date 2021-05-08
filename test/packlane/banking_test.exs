@@ -24,7 +24,7 @@ defmodule Packlane.BankingTest do
 
     test "get_account!/1 returns the account with given id", %{user: user} do
       account = account_fixture(%{user_id: user.id})
-      assert Banking.get_account!(account.id) == account
+      assert Banking.get_account!(user.id, account.id) == account
     end
 
     test "create_account/1 with valid data creates a account", %{user: user} do
@@ -49,13 +49,13 @@ defmodule Packlane.BankingTest do
     test "update_account/2 with invalid data returns error changeset", %{user: user} do
       account = account_fixture(%{user_id: user.id})
       assert {:error, %Ecto.Changeset{}} = Banking.update_account(account, @invalid_attrs)
-      assert account == Banking.get_account!(account.id)
+      assert account == Banking.get_account!(user.id, account.id)
     end
 
     test "delete_account/1 deletes the account", %{user: user} do
       account = account_fixture(%{user_id: user.id})
       assert {:ok, %Account{}} = Banking.delete_account(account)
-      assert_raise Ecto.NoResultsError, fn -> Banking.get_account!(account.id) end
+      assert_raise Ecto.NoResultsError, fn -> Banking.get_account!(user.id, account.id) end
     end
 
     test "change_account/1 returns a account changeset", %{user: user} do
@@ -101,7 +101,7 @@ defmodule Packlane.BankingTest do
       account = account_fixture(%{user_id: user.id})
       valid_attrs = Map.put(@valid_attrs, :from_id, account.id) |> Map.put(:type, :withdraw)
       assert {:error, "withdraw failed due to insuficient balance"} = Banking.create_transaction(valid_attrs)
-      assert Banking.get_account!(account.id) |> Map.get(:balance) == Decimal.new("0")
+      assert Banking.get_account!(user.id, account.id) |> Map.get(:balance) == Decimal.new("0")
     end
   end
 end

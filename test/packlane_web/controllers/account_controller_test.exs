@@ -1,6 +1,9 @@
 defmodule PacklaneWeb.AccountControllerTest do
   use PacklaneWeb.ConnCase
 
+  import Packlane.AccountsFixtures
+  import Packlane.BankingFixtures
+
   alias Packlane.Banking
 
   @create_attrs %{
@@ -49,21 +52,12 @@ defmodule PacklaneWeb.AccountControllerTest do
     end
   end
 
-  describe "delete account" do
-    setup [:create_account]
-
-    test "deletes chosen account", %{conn: conn, account: account} do
-      conn = delete(conn, Routes.account_path(conn, :delete, account))
-      assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, Routes.account_path(conn, :show, account))
-      end
+  describe "show" do
+    test "does not allow to access other users account", %{conn: conn} do
+      other_user = user_fixture()
+      other_account = account_fixture(%{user_id: other_user.id})
+      conn = get(conn, Routes.account_path(conn, :show, other_account.id))
+      assert json_response(conn, 404)
     end
-  end
-
-  defp create_account(%{user: user}) do
-    account = fixture(:account, user)
-    %{account: account}
   end
 end

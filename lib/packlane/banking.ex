@@ -39,7 +39,11 @@ defmodule Packlane.Banking do
       ** (Ecto.NoResultsError)
 
   """
-  def get_account!(id), do: Repo.get!(Account, id)
+  def get_account!(user_id, id) do
+    query = from a in Account,
+      where: a.user_id == ^user_id
+    Repo.get!(query, id)
+  end
 
   @doc """
   Creates a account.

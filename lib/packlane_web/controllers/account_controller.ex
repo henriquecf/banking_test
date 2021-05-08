@@ -22,23 +22,12 @@ defmodule PacklaneWeb.AccountController do
   end
 
   def show(conn, %{"id" => id}) do
-    account = Banking.get_account!(id)
-    render(conn, "show.json", account: account)
-  end
-
-  def update(conn, %{"id" => id, "account" => account_params}) do
-    account = Banking.get_account!(id)
-
-    with {:ok, %Account{} = account} <- Banking.update_account(account, account_params) do
+    try do
+      account = Banking.get_account!(conn.assigns.current_user.id, id)
       render(conn, "show.json", account: account)
-    end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    account = Banking.get_account!(id)
-
-    with {:ok, %Account{}} <- Banking.delete_account(account) do
-      send_resp(conn, :no_content, "")
+    rescue
+      Ecto.NoResultsError ->
+        {:error, :not_found}
     end
   end
 end
