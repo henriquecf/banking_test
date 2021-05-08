@@ -119,8 +119,9 @@ defmodule Packlane.Banking do
   """
   def list_banking_transactions(user_id) do
     query = from t in Transaction,
-      join: a in Account,
-      where: a.user_id == ^user_id
+      left_join: to in assoc(t, :to),
+      left_join: from in assoc(t, :from),
+      where: to.user_id == ^user_id or from.user_id == ^user_id
     Repo.all(query)
   end
 
@@ -138,7 +139,13 @@ defmodule Packlane.Banking do
       ** (Ecto.NoResultsError)
 
   """
-  def get_transaction!(id), do: Repo.get!(Transaction, id)
+  def get_transaction!(user_id, id) do
+    query = from t in Transaction,
+      left_join: to in assoc(t, :to),
+      left_join: from in assoc(t, :from),
+      where: to.user_id == ^user_id or from.user_id == ^user_id
+    Repo.get!(query, id)
+  end
 
   @doc """
   Creates a transaction.

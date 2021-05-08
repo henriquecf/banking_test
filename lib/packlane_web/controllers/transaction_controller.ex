@@ -21,7 +21,12 @@ defmodule PacklaneWeb.TransactionController do
   end
 
   def show(conn, %{"id" => id}) do
-    transaction = Banking.get_transaction!(id)
-    render(conn, "show.json", transaction: transaction)
+    try do
+      transaction = Banking.get_transaction!(conn.assigns.current_user.id, id)
+      render(conn, "show.json", transaction: transaction)
+    rescue
+      Ecto.NoResultsError ->
+        {:error, :not_found}
+    end
   end
 end

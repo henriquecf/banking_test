@@ -2,6 +2,7 @@ defmodule PacklaneWeb.TransactionControllerTest do
   use PacklaneWeb.ConnCase
 
   import Packlane.BankingFixtures
+  import Packlane.AccountsFixtures
 
   alias Packlane.Banking
 
@@ -51,6 +52,16 @@ defmodule PacklaneWeb.TransactionControllerTest do
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.transaction_path(conn, :create), transaction: @invalid_attrs)
       assert json_response(conn, 422)["errors"] != %{}
+    end
+  end
+
+  describe "show" do
+    test "does not allow to access other users transaction", %{conn: conn} do
+      other_user = user_fixture()
+      other_account = account_fixture(%{user_id: other_user.id})
+      other_transaction = transaction_fixture(%{to_id: other_account.id})
+      conn = get(conn, Routes.transaction_path(conn, :show, other_transaction.id))
+      assert json_response(conn, 404)
     end
   end
 end
